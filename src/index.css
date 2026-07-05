@@ -47,3 +47,16 @@
   color: #F3F4F6 !important;
   border: 1px solid #1F2E43 !important;
 }
+
+.leaflet-control-layers {
+  background: #151D2A !important;
+  color: #F3F4F6 !important;
+  border: 1px solid #1F2E43 !important;
+  border-radius: 8px !important;
+}
+.leaflet-control-layers-list {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px;
+}
+

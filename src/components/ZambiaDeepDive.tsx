@@ -13,6 +13,7 @@ interface FarmData {
   status: 'Healthy' | 'Moderate' | 'Stressed';
   crop: string;
   details: string;
+  zoom: number;
 }
 
 const FARMS: FarmData[] = [
@@ -25,7 +26,8 @@ const FARMS: FarmData[] = [
     evi: 0.62,
     status: 'Healthy',
     crop: 'Maize & Soybeans',
-    details: 'Commercial grain hub with center-pivot irrigation. Crop canopy index shows healthy vegetative growth.'
+    details: 'Commercial grain hub with center-pivot irrigation. Crop canopy index shows healthy vegetative growth.',
+    zoom: 12
   },
   {
     id: 'southern',
@@ -36,7 +38,8 @@ const FARMS: FarmData[] = [
     evi: 0.32,
     status: 'Stressed',
     crop: 'Rain-fed Maize',
-    details: 'Vulnerable smallholder farming clusters. Severely impacted by erratic rainfall distribution and El Niño weather anomalies.'
+    details: 'Vulnerable smallholder farming clusters. Severely impacted by erratic rainfall distribution and El Niño weather anomalies.',
+    zoom: 9
   }
 ];
 
@@ -73,13 +76,29 @@ export default function ZambiaDeepDive() {
 
     // Initialize map centering on Zambia
     mapRef.current = L.map(mapContainerRef.current, {
-      zoomControl: false // Custom placement later
-    }).setView([-15.0, 28.5], 6.5);
+      zoomControl: false
+    }).setView([-14.5, 28.2], 7);
 
     // Dark Cardo-tile layer matching premium UI aesthetics
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; CartoDB &copy; Digital Earth Africa'
-    }).addTo(mapRef.current);
+    });
+
+    // Satellite imagery base layer (Esri World Imagery)
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
+
+    // Default to Satellite view for space visuals
+    satelliteLayer.addTo(mapRef.current);
+
+    const baseMaps = {
+      "Satellite View": satelliteLayer,
+      "Dark Vector View": darkLayer
+    };
+
+    // Add base maps selector toggle
+    L.control.layers(baseMaps, {}, { position: 'topright' }).addTo(mapRef.current);
 
     // Add Zoom Control at bottom right
     L.control.zoom({ position: 'bottomright' }).addTo(mapRef.current);
@@ -94,9 +113,9 @@ export default function ZambiaDeepDive() {
       // Add Rectangle bounding box representation
       const rect = L.rectangle(farm.bbox, {
         color: color,
-        weight: 1.5,
+        weight: 2,
         fillColor: color,
-        fillOpacity: 0.15,
+        fillOpacity: 0.1,
         dashArray: '4, 4'
       }).addTo(layerGroup);
 
@@ -104,7 +123,7 @@ export default function ZambiaDeepDive() {
       const circle = L.circleMarker(farm.coords, {
         radius: 8,
         color: '#FFFFFF',
-        weight: 1.5,
+        weight: 2,
         fillColor: color,
         fillOpacity: 0.9
       }).addTo(layerGroup);
@@ -112,7 +131,7 @@ export default function ZambiaDeepDive() {
       // Click handles zoom & select
       const handleClick = () => {
         setSelectedFarm(farm);
-        mapRef.current?.setView(farm.coords, 7.5);
+        mapRef.current?.setView(farm.coords, farm.zoom);
       };
 
       rect.on('click', handleClick);
@@ -137,7 +156,7 @@ export default function ZambiaDeepDive() {
   const panToFarm = (farm: FarmData) => {
     setSelectedFarm(farm);
     if (mapRef.current) {
-      mapRef.current.setView(farm.coords, 7.5);
+      mapRef.current.setView(farm.coords, farm.zoom);
     }
   };
 
