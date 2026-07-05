@@ -1,0 +1,14 @@
+name = "agro-resilience-africa"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-04-01"
+
+[vars]
+DE_AFRICA_STAC_URL = "https://stac.digitalearth.africa"
+
+[ai]
+binding = "AI"
+
+[[kv_namespaces]]
+binding = "CROP_CACHE"
+id = "crop_cache_placeholder"
+preview_id = "crop_cache_placeholder_preview"
