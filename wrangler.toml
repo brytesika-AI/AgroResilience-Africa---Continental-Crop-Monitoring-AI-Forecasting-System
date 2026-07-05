@@ -10,5 +10,5 @@ binding = "AI"
 
 [[kv_namespaces]]
 binding = "CROP_CACHE"
-id = "crop_cache_placeholder"
-preview_id = "crop_cache_placeholder_preview"
+id = "9249c63c04d04bf393fe43b2c91d17e7"
+preview_id = "9249c63c04d04bf393fe43b2c91d17e7"
